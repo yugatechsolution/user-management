@@ -17,7 +17,7 @@ const App = () => {
   // Handle creating a new user
   const handleCreateUser = () => {
     axios
-      .post("http://localhost:3333/api/v1/users", newUser)
+      .post(process.env.REACT_APP_BACKEND_URL, newUser)
       .then((response) => {
         setUsers([...users, response.data]);
         setNewUser({ name: "", email: "" });

@@ -24,7 +24,7 @@ export default function LoginPage() {
     setError("");
     setLoading(true)
     try {
-      const { data } = await axios.post("https://example.com/api/login", {
+      const { data } = await axios.post(process.env.REACT_APP_BACKEND_URL + "/api/login", {
         email,
         password,
       });
