@@ -1,39 +1,76 @@
-import { useState } from "react";
-import { Box, AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemText, IconButton, Avatar } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const menuItems = ["Dashboard", "Analytics", "Chats", "Campaigns", "Customers", "Templates", "Chatbot", "Forms", "Manage"];
+import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, Box, Button } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import Constants from "../utils/Constants";
 
 export default function Dashboard() {
-    const [open, setOpen] = useState(false);
     const navigate = useNavigate();
-    const user = { name: "Varsha Sharma", email: "varsha@toptier.com" };
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [drawerOpen, setDrawerOpen] = useState(false);
+
+    useEffect(() => {
+        const token = localStorage.getItem(Constants.TOKEN_PROPERTY);
+        if (!token) {
+            navigate("/");
+        } else {
+            setUsername(localStorage.getItem(Constants.USERNAME_PROPERTY) || "User");
+            setEmail(localStorage.getItem(Constants.EMAIL_PROPERTY) || "user@example.com");
+        }
+    }, [navigate]);
+
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate("/");
+    };
 
     return (
         <Box sx={{ display: "flex" }}>
-            <AppBar position="fixed">
-                <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-                    <IconButton color="inherit" edge="start" onClick={() => setOpen(true)}>
-                        <MenuIcon />
-                    </IconButton>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Typography variant="body1" sx={{ mr: 2 }}>{user.name}</Typography>
-                        <Avatar>{user.name.charAt(0)}</Avatar>
-                    </Box>
-                </Toolbar>
-            </AppBar>
-            <Drawer open={open} onClose={() => setOpen(false)} variant="temporary">
+            {/* Sidebar */}
+            <Drawer variant="permanent" anchor="left" sx={{ width: 240, flexShrink: 0 }}>
                 <List>
-                    {menuItems.map((text) => (
-                        <ListItem button key={text} onClick={() => navigate(`/${text.toLowerCase()}`)}>
+                    {[
+                        "Dashboard",
+                        "Analytics",
+                        "Chats",
+                        "Campaigns",
+                        "Customers",
+                        "Templates",
+                        "Chatbot",
+                        "Forms",
+                        "Manage",
+                    ].map((text, index) => (
+                        <ListItem button key={index}>
                             <ListItemText primary={text} />
                         </ListItem>
                     ))}
                 </List>
             </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, p: 3, mt: 8 }}>
-                <Typography variant="h4">Welcome to your Dashboard</Typography>
+
+            {/* Main Content */}
+            <Box sx={{ flexGrow: 1, p: 3 }}>
+                <AppBar position="static" sx={{ backgroundColor: "#fff", color: "#000" }}>
+                    <Toolbar>
+                        <IconButton edge="start" color="inherit" onClick={() => setDrawerOpen(!drawerOpen)}>
+                            <MenuIcon />
+                        </IconButton>
+                        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                            Business Profile
+                        </Typography>
+                        <Typography variant="body1" sx={{ mr: 2 }}>
+                            {username} ({email})
+                        </Typography>
+                        <Button color="inherit" onClick={handleLogout}>
+                            Logout
+                        </Button>
+                    </Toolbar>
+                </AppBar>
+
+                <Box sx={{ mt: 3, p: 3, boxShadow: 2, borderRadius: 2, backgroundColor: "#fff" }}>
+                    <Typography variant="h5">Welcome, {username}!</Typography>
+                    <Typography variant="body1">Manage your business profile and settings here.</Typography>
+                </Box>
             </Box>
         </Box>
     );

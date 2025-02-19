@@ -1,48 +1,22 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "./App.css";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import AuthPage from "./components/AuthPage";
+import Dashboard from "./components/Dashboard";
+import "./App.css";
+import Constants from "./utils/Constants";
 
 const App = () => {
-  const [users, setUsers] = useState([]);
-  const [newUser, setNewUser] = useState({ name: "", email: "" });
-  const [searchName, setSearchName] = useState("");
-  const [searchResult, setSearchResult] = useState(null);
-
-  useEffect(() => {
-    // Fetch users on component mount
-    
-  }, []);
-
-  // Handle creating a new user
-  const handleCreateUser = () => {
-    axios
-      .post(process.env.REACT_APP_BACKEND_URL, newUser)
-      .then((response) => {
-        setUsers([...users, response.data]);
-        setNewUser({ name: "", email: "" });
-      })
-      .catch((error) => {
-        console.error("There was an error creating the user!", error);
-      });
-  };
-
-  // Handle searching for a user by name
-  const handleSearchUser = () => {
-    axios
-      .get(`http://localhost:3333/api/v1/users/${searchName}`)
-      .then((response) => {
-        setSearchResult(response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error searching for the user!", error);
-      });
-  };
+  const isAuthenticated = !!localStorage.getItem(Constants.TOKEN_PROPERTY); // Check if JWT exists
 
   return (
-    <div className="App">
-      <AuthPage />
-    </div>
+      <div className="App">
+        <Router>
+            <Routes>
+                <Route path="/" element={<AuthPage />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+            </Routes>
+        </Router>
+      </div>
   );
 };
 
