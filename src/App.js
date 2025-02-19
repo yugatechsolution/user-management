@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
-import LoginPage from "./LoginPage";
+import AuthPage from "./components/AuthPage";
 
 const App = () => {
   const [users, setUsers] = useState([]);
@@ -41,7 +41,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <LoginPage />
+      <AuthPage />
     </div>
   );
 };
