@@ -3,12 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, Box, Button } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Constants from "../utils/Constants";
+import Contacts from "./Contacts";
 
 export default function Dashboard() {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
-    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [selectedTab, setSelectedTab] = useState("Dashboard");
 
     useEffect(() => {
         const token = localStorage.getItem(Constants.TOKEN_PROPERTY);
@@ -30,18 +31,8 @@ export default function Dashboard() {
             {/* Sidebar */}
             <Drawer variant="permanent" anchor="left" sx={{ width: 240, flexShrink: 0 }}>
                 <List>
-                    {[
-                        "Dashboard",
-                        "Analytics",
-                        "Chats",
-                        "Campaigns",
-                        "Customers",
-                        "Templates",
-                        "Chatbot",
-                        "Forms",
-                        "Manage",
-                    ].map((text, index) => (
-                        <ListItem button key={index}>
+                    {["Dashboard", "Analytics", "Chats", "Campaigns", "Customers", "Templates", "Chatbot", "Forms", "Manage", "File Upload"].map((text) => (
+                        <ListItem button key={text} onClick={() => setSelectedTab(text)}>
                             <ListItemText primary={text} />
                         </ListItem>
                     ))}
@@ -52,7 +43,7 @@ export default function Dashboard() {
             <Box sx={{ flexGrow: 1, p: 3 }}>
                 <AppBar position="static" sx={{ backgroundColor: "#fff", color: "#000" }}>
                     <Toolbar>
-                        <IconButton edge="start" color="inherit" onClick={() => setDrawerOpen(!drawerOpen)}>
+                        <IconButton edge="start" color="inherit">
                             <MenuIcon />
                         </IconButton>
                         <Typography variant="h6" sx={{ flexGrow: 1 }}>
@@ -67,10 +58,19 @@ export default function Dashboard() {
                     </Toolbar>
                 </AppBar>
 
-                <Box sx={{ mt: 3, p: 3, boxShadow: 2, borderRadius: 2, backgroundColor: "#fff" }}>
-                    <Typography variant="h5">Welcome, {username}!</Typography>
-                    <Typography variant="body1">Manage your business profile and settings here.</Typography>
-                </Box>
+                {/* Conditional Rendering */}
+                {selectedTab === "Dashboard" ? (
+                    <Box sx={{ mt: 3, p: 3, boxShadow: 2, borderRadius: 2, backgroundColor: "#fff" }}>
+                        <Typography variant="h5">Welcome, {username}!</Typography>
+                        <Typography variant="body1">Manage your business profile and settings here.</Typography>
+                    </Box>
+                ) : selectedTab === "File Upload" ? (
+                    <Contacts />
+                ) : (
+                    <Typography variant="h6" sx={{ mt: 3 }}>
+                        {selectedTab} - Coming Soon!
+                    </Typography>
+                )}
             </Box>
         </Box>
     );
