@@ -31,7 +31,7 @@ export default function Dashboard() {
             {/* Sidebar */}
             <Drawer variant="permanent" anchor="left" sx={{ width: 240, flexShrink: 0 }}>
                 <List>
-                    {["Dashboard", "Analytics", "Chats", "Campaigns", "Customers", "Templates", "Chatbot", "Forms", "Manage", "File Upload"].map((text) => (
+                    {["Dashboard", "Analytics", "Chats", "Campaigns", "Customers", "Templates", "Chatbot", "Forms", "Manage", "Contacts"].map((text) => (
                         <ListItem button key={text} onClick={() => setSelectedTab(text)}>
                             <ListItemText primary={text} />
                         </ListItem>
@@ -64,7 +64,7 @@ export default function Dashboard() {
                         <Typography variant="h5">Welcome, {username}!</Typography>
                         <Typography variant="body1">Manage your business profile and settings here.</Typography>
                     </Box>
-                ) : selectedTab === "File Upload" ? (
+                ) : selectedTab === "Contacts" ? (
                     <Contacts />
                 ) : (
                     <Typography variant="h6" sx={{ mt: 3 }}>

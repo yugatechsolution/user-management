@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import axios from "axios";
 import Constants from "../utils/Constants";
 
@@ -15,10 +15,9 @@ export default function Contacts() {
         setLoading(true);
         try {
             const token = localStorage.getItem(Constants.TOKEN_PROPERTY);
-            const response = await axios.get(process.env.REACT_APP_BACKEND_URL + "/api/contacts", {
+            const response = await axios.get(process.env.REACT_APP_BACKEND_URL + process.env.REACT_APP_CONTACTS_URI, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            console.log(`Contacts fetched: ${JSON.stringify(response.data)}`)
             setContacts(response.data);
         } catch (error) {
             console.error("Error fetching contacts", error);
@@ -52,6 +51,22 @@ export default function Contacts() {
         }
     };
 
+    const handleDelete = async (contactId) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this contact?");
+        if (!confirmDelete) return;
+
+        try {
+            const token = localStorage.getItem(Constants.TOKEN_PROPERTY);
+            await axios.delete(process.env.REACT_APP_BACKEND_URL + process.env.REACT_APP_CONTACTS_URI, {
+                headers: { Authorization: `Bearer ${token}` },
+                params: { phoneNumber: contactId }
+            });
+            fetchContacts();
+        } catch (error) {
+            console.error("Error deleting contact", error);
+        }
+    };
+
     return (
         <div>
             <h2>Contacts</h2>
@@ -62,6 +77,7 @@ export default function Contacts() {
                         <TableRow>
                             <TableCell>Name</TableCell>
                             <TableCell>Phone Number</TableCell>
+                            <TableCell>Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -69,6 +85,11 @@ export default function Contacts() {
                             <TableRow key={index}>
                                 <TableCell>{contact.name}</TableCell>
                                 <TableCell>{contact.phoneNumber}</TableCell>
+                                <TableCell>
+                                    <Button color="error" onClick={() => handleDelete(contact.phoneNumber)}>
+                                        Delete
+                                    </Button>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
