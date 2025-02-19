@@ -103,7 +103,7 @@ export default function Contacts() {
     return (
         <div>
             <Box display="flex" justifyContent="space-between" alignItems="center">
-                <h2>Contacts</h2>
+                <h2>List of all your CONTACTS</h2>
                 <Box display="flex" alignItems="center" gap={2}>
                     <Button variant="contained" sx={{ backgroundColor: "#0288d1", color: "white" }} onClick={handleDownloadSample}>
                         Download Sample File
@@ -130,10 +130,10 @@ export default function Contacts() {
             <TableContainer component={Paper} sx={{ mt: 2 }}>
                 <Table size="small">
                     <TableHead>
-                        <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Phone Number</TableCell>
-                            <TableCell>Actions</TableCell>
+                        <TableRow sx={{ backgroundColor: "#0288d1" }}>
+                            <TableCell sx={{ fontWeight: "bold", color: "white" }}>Name</TableCell>
+                            <TableCell sx={{ fontWeight: "bold", color: "white" }}>Phone Number</TableCell>
+                            <TableCell sx={{ fontWeight: "bold", color: "white" }}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

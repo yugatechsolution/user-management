@@ -27,12 +27,29 @@ export default function Dashboard() {
     };
 
     return (
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex", height: "100vh", backgroundColor: "#f4f4f4" }}>
             {/* Sidebar */}
-            <Drawer variant="permanent" anchor="left" sx={{ width: 240, flexShrink: 0 }}>
+            <Drawer
+                variant="permanent"
+                anchor="left"
+                sx={{
+                    width: 240,
+                    flexShrink: 0,
+                    "& .MuiDrawer-paper": {
+                        width: 240,
+                        backgroundColor: "#2c3e50",
+                        color: "white",
+                    },
+                }}
+            >
                 <List>
                     {["Dashboard", "Analytics", "Chats", "Campaigns", "Customers", "Templates", "Chatbot", "Forms", "Manage", "Contacts"].map((text) => (
-                        <ListItem button key={text} onClick={() => setSelectedTab(text)}>
+                        <ListItem
+                            button
+                            key={text}
+                            onClick={() => setSelectedTab(text)}
+                            sx={{ "&:hover": { backgroundColor: "#34495e" }, color: "white" }}
+                        >
                             <ListItemText primary={text} />
                         </ListItem>
                     ))}
@@ -41,7 +58,7 @@ export default function Dashboard() {
 
             {/* Main Content */}
             <Box sx={{ flexGrow: 1, p: 3 }}>
-                <AppBar position="static" sx={{ backgroundColor: "#fff", color: "#000" }}>
+                <AppBar position="static" sx={{ backgroundColor: "#1abc9c", color: "white" }}>
                     <Toolbar>
                         <IconButton edge="start" color="inherit">
                             <MenuIcon />
@@ -52,7 +69,7 @@ export default function Dashboard() {
                         <Typography variant="body1" sx={{ mr: 2 }}>
                             {username} ({email})
                         </Typography>
-                        <Button color="inherit" onClick={handleLogout}>
+                        <Button color="inherit" onClick={handleLogout} sx={{ backgroundColor: "#e74c3c", color: "white", "&:hover": { backgroundColor: "#c0392b" } }}>
                             Logout
                         </Button>
                     </Toolbar>
