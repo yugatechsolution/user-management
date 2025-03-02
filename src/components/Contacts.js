@@ -1,19 +1,25 @@
 import { useEffect, useState } from "react";
 import {
+  Box,
   Button,
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
-  Box,
-  Typography,
   TextField,
+  Typography,
 } from "@mui/material";
-import axios from "axios";
-import Constants from "../utils/Constants";
+import {
+  fetchContacts,
+  handleDelete,
+  handleEdit,
+  handleFileChange,
+  handleFileUpload,
+  handleSaveEdit,
+} from "../api/ContactsAPIs";
 
 export default function Contacts() {
   const [contacts, setContacts] = useState([]);
@@ -24,124 +30,8 @@ export default function Contacts() {
   const [editedName, setEditedName] = useState("");
 
   useEffect(() => {
-    fetchContacts();
+    fetchContacts(setLoading, setContacts);
   }, []);
-
-  const fetchContacts = async () => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem(Constants.TOKEN_PROPERTY);
-      const response = await axios.get(
-        process.env.REACT_APP_BACKEND_URL + process.env.REACT_APP_CONTACTS_URI,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-      setContacts(response.data);
-    } catch (error) {
-      console.error("Error fetching contacts", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    setSelectedFile(file);
-
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const text = e.target.result;
-        const rows = text.split("\n").slice(1);
-        const preview = rows
-          .map((row) => {
-            const [name, phoneNumber] = row.split(",");
-            return { name, phoneNumber };
-          })
-          .filter((contact) => contact.name && contact.phoneNumber);
-        setPreviewContacts(preview);
-      };
-      reader.readAsText(file);
-    }
-  };
-
-  const handleFileUpload = async () => {
-    if (!selectedFile) return;
-
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-
-    try {
-      const token = localStorage.getItem(Constants.TOKEN_PROPERTY);
-      const response = await axios.post(
-        process.env.REACT_APP_BACKEND_URL +
-          process.env.REACT_APP_CONTACTS_BULK_UPLOAD_URI,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        },
-      );
-      console.log(response.data);
-      const successful = response.data.savedContacts.length;
-      const failed = response.data.errors.length;
-      alert(
-        `Successfully saved ${successful} contacts and failed to save ${failed} contacts.`,
-      );
-      fetchContacts();
-      setSelectedFile(null);
-      setPreviewContacts([]);
-    } catch (error) {
-      console.error("Error uploading file", error);
-    }
-  };
-
-  const handleEdit = (contact) => {
-    setEditingContact(contact.phoneNumber);
-    setEditedName(contact.name);
-  };
-
-  const handleSaveEdit = async () => {
-    try {
-      const token = localStorage.getItem(Constants.TOKEN_PROPERTY);
-      await axios.put(
-        process.env.REACT_APP_BACKEND_URL + process.env.REACT_APP_CONTACTS_URI,
-        null,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { phoneNumber: editingContact, name: editedName },
-        },
-      );
-      fetchContacts();
-      setEditingContact(null);
-    } catch (error) {
-      console.error("Error updating contact", error);
-    }
-  };
-
-  const handleDelete = async (contactId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this contact?",
-    );
-    if (!confirmDelete) return;
-
-    try {
-      const token = localStorage.getItem(Constants.TOKEN_PROPERTY);
-      await axios.delete(
-        process.env.REACT_APP_BACKEND_URL + process.env.REACT_APP_CONTACTS_URI,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { phoneNumber: contactId },
-        },
-      );
-      fetchContacts();
-    } catch (error) {
-      console.error("Error deleting contact", error);
-    }
-  };
 
   const handleDownloadSample = () => {
     const csvContent =
@@ -177,14 +67,24 @@ export default function Contacts() {
               type="file"
               accept=".csv"
               hidden
-              onChange={handleFileChange}
+              onChange={(event) =>
+                handleFileChange(event, setSelectedFile, setPreviewContacts)
+              }
             />
           </Button>
           {selectedFile && <span>{selectedFile.name}</span>}
           <Button
             variant="contained"
             sx={{ backgroundColor: "#d32f2f", color: "white" }}
-            onClick={handleFileUpload}
+            onClick={() =>
+              handleFileUpload(
+                selectedFile,
+                setSelectedFile,
+                setPreviewContacts,
+                setLoading,
+                setContacts,
+              )
+            }
             disabled={!selectedFile}
           >
             Upload Contacts
@@ -226,17 +126,35 @@ export default function Contacts() {
                 <TableCell>{contact.phoneNumber}</TableCell>
                 <TableCell align="center">
                   {editingContact === contact.phoneNumber ? (
-                    <Button color="primary" onClick={handleSaveEdit}>
+                    <Button
+                      color="primary"
+                      onClick={() =>
+                        handleSaveEdit(
+                          editingContact,
+                          editedName,
+                          setEditingContact,
+                          setLoading,
+                          setContacts,
+                        )
+                      }
+                    >
                       Save
                     </Button>
                   ) : (
-                    <Button color="primary" onClick={() => handleEdit(contact)}>
+                    <Button
+                      color="primary"
+                      onClick={() =>
+                        handleEdit(contact, setEditingContact, setEditedName)
+                      }
+                    >
                       Edit
                     </Button>
                   )}
                   <Button
                     color="error"
-                    onClick={() => handleDelete(contact.phoneNumber)}
+                    onClick={() =>
+                      handleDelete(contact.phoneNumber, setLoading, setContacts)
+                    }
                   >
                     Delete
                   </Button>
