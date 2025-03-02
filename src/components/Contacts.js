@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import {
-  Box,
   Button,
-  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Paper,
+  Box,
   Typography,
 } from "@mui/material";
 import axios from "axios";
@@ -175,7 +175,10 @@ export default function Contacts() {
               <TableCell sx={{ fontWeight: "bold", color: "white" }}>
                 Phone Number
               </TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "white" }}>
+              <TableCell
+                sx={{ fontWeight: "bold", color: "white" }}
+                align="center"
+              >
                 Actions
               </TableCell>
             </TableRow>
@@ -185,7 +188,8 @@ export default function Contacts() {
               <TableRow key={index}>
                 <TableCell>{contact.name}</TableCell>
                 <TableCell>{contact.phoneNumber}</TableCell>
-                <TableCell>
+                <TableCell align="center">
+                  <Button color="primary">Edit</Button>
                   <Button
                     color="error"
                     onClick={() => handleDelete(contact.phoneNumber)}
