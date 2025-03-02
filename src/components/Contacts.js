@@ -10,6 +10,7 @@ import {
   Paper,
   Box,
   Typography,
+  TextField,
 } from "@mui/material";
 import axios from "axios";
 import Constants from "../utils/Constants";
@@ -19,6 +20,8 @@ export default function Contacts() {
   const [loading, setLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewContacts, setPreviewContacts] = useState([]);
+  const [editingContact, setEditingContact] = useState(null);
+  const [editedName, setEditedName] = useState("");
 
   useEffect(() => {
     fetchContacts();
@@ -93,6 +96,29 @@ export default function Contacts() {
       setPreviewContacts([]);
     } catch (error) {
       console.error("Error uploading file", error);
+    }
+  };
+
+  const handleEdit = (contact) => {
+    setEditingContact(contact.phoneNumber);
+    setEditedName(contact.name);
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      const token = localStorage.getItem(Constants.TOKEN_PROPERTY);
+      await axios.put(
+        process.env.REACT_APP_BACKEND_URL + process.env.REACT_APP_CONTACTS_URI,
+        null,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { phoneNumber: editingContact, name: editedName },
+        },
+      );
+      fetchContacts();
+      setEditingContact(null);
+    } catch (error) {
+      console.error("Error updating contact", error);
     }
   };
 
@@ -184,12 +210,30 @@ export default function Contacts() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {contacts.map((contact, index) => (
-              <TableRow key={index}>
-                <TableCell>{contact.name}</TableCell>
+            {contacts.map((contact) => (
+              <TableRow key={contact.phoneNumber}>
+                <TableCell>
+                  {editingContact === contact.phoneNumber ? (
+                    <TextField
+                      value={editedName}
+                      onChange={(e) => setEditedName(e.target.value)}
+                      size="small"
+                    />
+                  ) : (
+                    contact.name
+                  )}
+                </TableCell>
                 <TableCell>{contact.phoneNumber}</TableCell>
                 <TableCell align="center">
-                  <Button color="primary">Edit</Button>
+                  {editingContact === contact.phoneNumber ? (
+                    <Button color="primary" onClick={handleSaveEdit}>
+                      Save
+                    </Button>
+                  ) : (
+                    <Button color="primary" onClick={() => handleEdit(contact)}>
+                      Edit
+                    </Button>
+                  )}
                   <Button
                     color="error"
                     onClick={() => handleDelete(contact.phoneNumber)}
