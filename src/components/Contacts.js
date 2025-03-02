@@ -21,6 +21,7 @@ import {
   handleFileUpload,
   handleSaveEdit,
 } from "../api/ContactsAPIs";
+import { broadcastWhatsAppMessage } from "../api/WhatsAppAPIs";
 
 export default function Contacts() {
   const [contacts, setContacts] = useState([]);
@@ -46,6 +47,14 @@ export default function Contacts() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleSendWhatsAppMessage = (phoneNumber, templateName) => {
+    const messageTemplate = {
+      phoneNumbers: [phoneNumber],
+      templateName: templateName,
+    };
+    broadcastWhatsAppMessage(messageTemplate, setLoading);
   };
 
   return (
@@ -160,6 +169,17 @@ export default function Contacts() {
                     }
                   >
                     Delete
+                  </Button>
+                  <Button
+                    color="success"
+                    onClick={() =>
+                      handleSendWhatsAppMessage(
+                        contact.phoneNumber,
+                        "hello_world",
+                      )
+                    }
+                  >
+                    Send HelloWorld template
                   </Button>
                 </TableCell>
               </TableRow>
