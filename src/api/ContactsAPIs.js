@@ -112,6 +112,34 @@ export const handleSaveEdit = async (
   }
 };
 
+export const handleAddContact = async (
+  newName,
+  newContactId,
+  setNewName,
+  setNewContactId,
+  setLoading,
+  setContacts,
+) => {
+  try {
+    const token = localStorage.getItem(Constants.TOKEN_PROPERTY);
+    await axios.post(
+      process.env.REACT_APP_BACKEND_URL + process.env.REACT_APP_CONTACTS_URI,
+      {
+        name: newName,
+        phoneNumber: newContactId,
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+    setNewName("");
+    setNewContactId("");
+    fetchContacts(setLoading, setContacts);
+  } catch (error) {
+    console.error("Error adding contact", error);
+  }
+};
+
 export const handleDelete = async (contactId, setLoading, setContacts) => {
   const confirmDelete = window.confirm(
     "Are you sure you want to delete this contact?",

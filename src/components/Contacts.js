@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import {
   fetchContacts,
+  handleAddContact,
   handleDelete,
   handleEdit,
   handleFileChange,
@@ -28,6 +29,8 @@ export default function Contacts() {
   const [previewContacts, setPreviewContacts] = useState([]);
   const [editingContact, setEditingContact] = useState(null);
   const [editedName, setEditedName] = useState("");
+  const [newContactName, setNewContactName] = useState("");
+  const [newContactPhone, setNewContactPhone] = useState("");
 
   useEffect(() => {
     fetchContacts(setLoading, setContacts);
@@ -161,6 +164,41 @@ export default function Contacts() {
                 </TableCell>
               </TableRow>
             ))}
+            <TableRow>
+              <TableCell>
+                <TextField
+                  value={newContactName}
+                  onChange={(e) => setNewContactName(e.target.value)}
+                  size="small"
+                  placeholder="Enter name"
+                />
+              </TableCell>
+              <TableCell>
+                <TextField
+                  value={newContactPhone}
+                  onChange={(e) => setNewContactPhone(e.target.value)}
+                  size="small"
+                  placeholder="Enter phone number"
+                />
+              </TableCell>
+              <TableCell align="center">
+                <Button
+                  color="success"
+                  onClick={() =>
+                    handleAddContact(
+                      newContactName,
+                      newContactPhone,
+                      setNewContactName,
+                      setNewContactPhone,
+                      setLoading,
+                      setContacts,
+                    )
+                  }
+                >
+                  ADD NEW CONTACT
+                </Button>
+              </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
