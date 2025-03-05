@@ -11,7 +11,9 @@ export const fetchContacts = async (setLoading, setContacts) => {
         headers: { Authorization: `Bearer ${token}` },
       },
     );
-    setContacts(response.data);
+    const data = response.data;
+    setContacts(data);
+    return data;
   } catch (error) {
     console.error("Error fetching contacts", error);
   } finally {

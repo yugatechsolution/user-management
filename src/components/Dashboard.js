@@ -15,6 +15,7 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import Constants from "../utils/Constants";
 import Contacts from "./Contacts";
+import ChatWindow from "./ChatWindow";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -128,6 +129,8 @@ export default function Dashboard() {
           </Box>
         ) : selectedTab === "Contacts" ? (
           <Contacts />
+        ) : selectedTab === "Chats" ? (
+            <ChatWindow />
         ) : (
           <Typography variant="h6" sx={{ mt: 3 }}>
             {selectedTab} - Coming Soon!
