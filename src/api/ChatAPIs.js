@@ -1,7 +1,7 @@
 import Constants from "../utils/Constants";
 import axios from "axios";
 
-export const getChats = async (phoneNumber) => {
+export const loadChats = async (phoneNumber, setChats) => {
     const token = localStorage.getItem(Constants.TOKEN_PROPERTY);
     console.log(token);
     console.log(phoneNumber);
@@ -13,9 +13,6 @@ export const getChats = async (phoneNumber) => {
         },
     );
     console.log(response);
+    setChats(response.data)
     return response.data;
 };
-
-export function sendMessage() {
-
-}

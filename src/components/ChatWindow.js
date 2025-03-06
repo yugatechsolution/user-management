@@ -6,8 +6,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { getChats, sendMessage } from "../api/ChatAPIs";
+import { loadChats } from "../api/ChatAPIs";
 import { fetchContacts } from "../api/ContactsAPIs";
+import {sendWhatsAppTextMessage} from "../api/WhatsAppAPIs";
 
 export default function ChatWindow() {
   const [contacts, setContacts] = useState([]);
@@ -42,9 +43,8 @@ export default function ChatWindow() {
     setSelectedContact(contact);
     setLoadingChats(true);
     try {
-      const data = await getChats(contact["phone_number"]);
+      const data = await loadChats(contact.phoneNumber, setChats);
       console.log("Chats=", data);
-      setChats(data);
     } catch (error) {
       console.error("Error fetching chats", error);
     } finally {
@@ -55,11 +55,14 @@ export default function ChatWindow() {
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
     try {
-      const msg = await sendMessage(
-        selectedContact["phone_number"],
+      const phoneNumber = selectedContact.phoneNumber;
+      const msg = await sendWhatsAppTextMessage(
+        phoneNumber,
         newMessage,
+          setLoadingChats
       );
-      setChats([...chats, msg]);
+      console.log("Msg sent, response=", msg);
+      loadChats(phoneNumber, setChats);
     } catch (error) {
       console.error("Error sending message", error);
     }
@@ -90,7 +93,7 @@ export default function ChatWindow() {
         ) : (
           contacts.map((contact) => (
             <Button
-              key={contact["phone_number"]}
+              key={contact.phoneNumber}
               onClick={() => handleSelectContact(contact)}
               sx={{
                 width: "100%",

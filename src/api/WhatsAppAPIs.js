@@ -1,14 +1,21 @@
 import axios from "axios";
 import Constants from "../utils/Constants";
 
-export const broadcastWhatsAppMessage = async (messageRequest, setLoading) => {
+export const sendWhatsAppTextMessage = async (phoneNumber, message, setLoading) => {
+  const messageRequest = {
+    phoneNumbers: [phoneNumber],
+    requestType: "TEXT",
+    textMessageRequest: {
+      textBody: message
+    }
+  }
   try {
     console.log(messageRequest);
     setLoading(true);
     const token = localStorage.getItem(Constants.TOKEN_PROPERTY); // Adjust if needed
 
     const response = await axios.post(
-      process.env.REACT_APP_BACKEND_URL + "/api/whatsapp/broadcast",
+      process.env.REACT_APP_BACKEND_URL + "/api/whatsapp/message",
       messageRequest,
       {
         headers: { Authorization: `Bearer ${token}` },

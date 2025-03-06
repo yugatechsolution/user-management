@@ -21,7 +21,7 @@ import {
   handleFileUpload,
   handleSaveEdit,
 } from "../api/ContactsAPIs";
-import { broadcastWhatsAppMessage } from "../api/WhatsAppAPIs";
+import {sendWhatsAppTextMessage} from "../api/WhatsAppAPIs";
 
 export default function Contacts() {
   const [contacts, setContacts] = useState([]);
@@ -49,12 +49,12 @@ export default function Contacts() {
     document.body.removeChild(link);
   };
 
-  const handleSendWhatsAppMessage = (phoneNumber, templateName) => {
+  const handleSendWhatsAppMessage = async (phoneNumber, templateName) => {
     const messageTemplate = {
       phoneNumbers: [phoneNumber],
       templateName: templateName,
     };
-    broadcastWhatsAppMessage(messageTemplate, setLoading);
+    await sendWhatsAppTextMessage(phoneNumber, messageTemplate, setLoading);
   };
 
   return (
