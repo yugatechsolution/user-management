@@ -3,10 +3,12 @@ import {
   Box,
   Button,
   CircularProgress,
+  IconButton,
   TextField,
   Typography,
 } from "@mui/material";
-import { loadChats } from "../api/ChatAPIs";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { deleteChat, loadChats } from "../api/ChatAPIs";
 import { fetchContacts } from "../api/ContactsAPIs";
 import { sendWhatsAppTextMessage } from "../api/WhatsAppAPIs";
 
@@ -19,19 +21,19 @@ export default function ChatWindow() {
   const [loadingChats, setLoadingChats] = useState(false);
   const chatEndRef = useRef(null);
 
-  useEffect(() => {
-    const fetchContactsData = async () => {
-      setLoadingContacts(true);
-      try {
-        const contacts = await fetchContacts(setLoadingContacts, setContacts);
-        console.log(contacts);
-      } catch (error) {
-        console.error("Error fetching contacts", error);
-      } finally {
-        setLoadingContacts(false);
-      }
-    };
+  const fetchContactsData = async () => {
+    setLoadingContacts(true);
+    try {
+      const contacts = await fetchContacts(setLoadingContacts, setContacts);
+      console.log(contacts);
+    } catch (error) {
+      console.error("Error fetching contacts", error);
+    } finally {
+      setLoadingContacts(false);
+    }
+  };
 
+  useEffect(() => {
     fetchContactsData();
   }, []);
 
@@ -41,10 +43,9 @@ export default function ChatWindow() {
 
   const handleSelectContact = async (contact) => {
     setSelectedContact(contact);
-    setLoadingChats(false);
+    setLoadingChats(true);
     try {
-      const data = await loadChats(contact.phoneNumber, setChats);
-      console.log("Chats=", data);
+      await loadChats(contact.phoneNumber, setChats);
     } catch (error) {
       console.error("Error fetching chats", error);
     } finally {
@@ -56,13 +57,27 @@ export default function ChatWindow() {
     if (!newMessage.trim()) return;
     try {
       const phoneNumber = selectedContact.phoneNumber;
-      const msg = await sendWhatsAppTextMessage(phoneNumber, newMessage);
-      console.log("Msg sent, response=", msg);
+      await sendWhatsAppTextMessage(phoneNumber, newMessage);
       loadChats(phoneNumber, setChats);
     } catch (error) {
       console.error("Error sending message", error);
     }
     setNewMessage("");
+  };
+
+  const handleDeleteChat = async (contact) => {
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete the chat with ${contact.name}?`,
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await deleteChat(contact.phoneNumber);
+      setSelectedContact(null);
+      await fetchContactsData();
+    } catch (error) {
+      console.error("Error deleting chat", error);
+    }
   };
 
   return (
@@ -88,12 +103,12 @@ export default function ChatWindow() {
           <CircularProgress size={24} />
         ) : (
           contacts.map((contact) => (
-            <Button
+            <Box
               key={contact.phoneNumber}
-              onClick={() => handleSelectContact(contact)}
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
               sx={{
-                width: "100%",
-                justifyContent: "flex-start",
                 p: 1,
                 borderRadius: "8px",
                 textTransform: "none",
@@ -101,10 +116,28 @@ export default function ChatWindow() {
                 background: "#f1f1f1",
                 mb: 1,
                 "&:hover": { background: "#ddd" },
+                display: "flex",
+                alignItems: "center",
               }}
             >
-              {contact.name}
-            </Button>
+              <Box
+                onClick={() => handleSelectContact(contact)}
+                sx={{ flexGrow: 1, cursor: "pointer" }}
+              >
+                <Typography sx={{ fontWeight: "bold" }}>
+                  {contact.name}
+                </Typography>
+                <Typography sx={{ fontSize: "12px", color: "#888" }}>
+                  {contact.phoneNumber}
+                </Typography>
+              </Box>
+              <IconButton
+                onClick={() => handleDeleteChat(contact)}
+                sx={{ color: "red", ml: 1 }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Box>
           ))
         )}
       </Box>
