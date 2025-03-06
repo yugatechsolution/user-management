@@ -223,7 +223,14 @@ export default function ChatWindow() {
                 fullWidth
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault(); // Prevent default Enter behavior
+                    handleSendMessage();
+                  }
+                }}
                 placeholder="Type a message..."
+                multiline
                 variant="outlined"
                 sx={{
                   "& .MuiOutlinedInput-root": {
