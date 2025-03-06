@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { loadChats } from "../api/ChatAPIs";
 import { fetchContacts } from "../api/ContactsAPIs";
-import {sendWhatsAppTextMessage} from "../api/WhatsAppAPIs";
+import { sendWhatsAppTextMessage } from "../api/WhatsAppAPIs";
 
 export default function ChatWindow() {
   const [contacts, setContacts] = useState([]);
@@ -56,10 +56,7 @@ export default function ChatWindow() {
     if (!newMessage.trim()) return;
     try {
       const phoneNumber = selectedContact.phoneNumber;
-      const msg = await sendWhatsAppTextMessage(
-        phoneNumber,
-        newMessage
-      );
+      const msg = await sendWhatsAppTextMessage(phoneNumber, newMessage);
       console.log("Msg sent, response=", msg);
       loadChats(phoneNumber, setChats);
     } catch (error) {
