@@ -54,7 +54,7 @@ export default function Contacts() {
       phoneNumbers: [phoneNumber],
       templateName: templateName,
     };
-    await sendWhatsAppTextMessage(phoneNumber, messageTemplate, setLoading);
+    await sendWhatsAppTextMessage(phoneNumber, messageTemplate);
   };
 
   return (

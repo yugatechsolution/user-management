@@ -41,7 +41,7 @@ export default function ChatWindow() {
 
   const handleSelectContact = async (contact) => {
     setSelectedContact(contact);
-    setLoadingChats(true);
+    setLoadingChats(false);
     try {
       const data = await loadChats(contact.phoneNumber, setChats);
       console.log("Chats=", data);
@@ -58,8 +58,7 @@ export default function ChatWindow() {
       const phoneNumber = selectedContact.phoneNumber;
       const msg = await sendWhatsAppTextMessage(
         phoneNumber,
-        newMessage,
-          setLoadingChats
+        newMessage
       );
       console.log("Msg sent, response=", msg);
       loadChats(phoneNumber, setChats);

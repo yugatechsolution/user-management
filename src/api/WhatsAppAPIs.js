@@ -1,7 +1,7 @@
 import axios from "axios";
 import Constants from "../utils/Constants";
 
-export const sendWhatsAppTextMessage = async (phoneNumber, message, setLoading) => {
+export const sendWhatsAppTextMessage = async (phoneNumber, message) => {
   const messageRequest = {
     phoneNumbers: [phoneNumber],
     requestType: "TEXT",
@@ -11,7 +11,6 @@ export const sendWhatsAppTextMessage = async (phoneNumber, message, setLoading) 
   }
   try {
     console.log(messageRequest);
-    setLoading(true);
     const token = localStorage.getItem(Constants.TOKEN_PROPERTY); // Adjust if needed
 
     const response = await axios.post(
@@ -27,6 +26,6 @@ export const sendWhatsAppTextMessage = async (phoneNumber, message, setLoading) 
     console.error("Error broadcasting WhatsApp message", error);
     throw error;
   } finally {
-    setLoading(false);
+    console.log("WhatsApp message finished");
   }
 };
