@@ -12,7 +12,8 @@ export const loadChats = async (phoneNumber, setChats) => {
             headers: { Authorization: `Bearer ${token}` },
         },
     );
-    console.log(response);
-    setChats(response.data)
-    return response.data;
+    const data = response.data;
+    console.log("Chats sent, response=", data);
+    setChats(data)
+    return data;
 };

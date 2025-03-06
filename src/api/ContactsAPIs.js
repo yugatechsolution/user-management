@@ -12,6 +12,7 @@ export const fetchContacts = async (setLoading, setContacts) => {
       },
     );
     const data = response.data;
+    console.log("Contacts sent, response=", data);
     setContacts(data);
     return data;
   } catch (error) {
